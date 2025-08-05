@@ -55,6 +55,7 @@ import java.util.ArrayList;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import android.provider.DocumentsContract;
 
 @SuppressWarnings("ConstantConditions")
 public abstract class NativeActivity extends Activity {
@@ -1517,6 +1518,30 @@ public abstract class NativeActivity extends Activity {
 				intent.addFlags(Intent.FLAG_GRANT_PREFIX_URI_PERMISSION);
 				intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
 				intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);  // Only allow local folders.
+				
+				// Pre-select PSP folder for Android 13+ (API 33+)
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+					try {
+						// Try to create a URI for the PSP folder in external storage
+						String externalStoragePath = Environment.getExternalStorageDirectory().getAbsolutePath();
+						File pspFolder = new File(externalStoragePath, "PSP");
+						
+						if (pspFolder.exists()) {
+							// Create a content URI for the PSP folder
+							Uri pspUri = DocumentsContract.buildTreeDocumentUri(
+								"com.android.externalstorage.documents", 
+								"primary:PSP"
+							);
+							intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, pspUri);
+							Log.i(TAG, "Setting EXTRA_INITIAL_URI to PSP folder: " + pspUri);
+						} else {
+							Log.i(TAG, "PSP folder does not exist, not setting initial URI");
+						}
+					} catch (Exception e) {
+						Log.w(TAG, "Failed to set initial URI for PSP folder: " + e.getMessage());
+					}
+				}
+				
 				startActivityForResult(intent, packedResultCode);
 				return true;
 			} catch (Exception e) {

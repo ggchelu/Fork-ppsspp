@@ -1,14 +1,14 @@
 plugins {
-	id 'com.gladed.androidgitversion' version '0.4.14'
+	// id 'com.gladed.androidgitversion' version '0.4.14'
 }
 apply plugin: 'com.android.application'
 
-androidGitVersion {
-	codeFormat = "MNNPPBBBB"
-	format = "%tag%%-count%%-branch%%-dirty%"
-	prefix = "v"  // Only tags beginning with v are considered.
-	untrackedIsDirty = false
-}
+// androidGitVersion {
+// 	codeFormat = "MNNPPBBBB"
+// 	format = "%tag%%-count%%-branch%%-dirty%"
+// 	prefix = "v"  // Only tags beginning with v are considered.
+// 	untrackedIsDirty = false
+// }
 
 dependencies {
 	// 1.2.0 is the newest version we can use that won't complain about minSdk version.
@@ -56,26 +56,9 @@ android {
 	}
 
 	defaultConfig {
-		/*
-		configurations.all {
-			resolutionStrategy {
-				// Newer versions are not compatible with our minsdk. Should find a way to exclude it entirely
-				// since we have no use for this transitive dependency.
-				force 'androidx.emoji2:emoji2-views-helper:1.0.0'
-			}
-		}
-		*/
-
 		applicationId 'org.ppsspp.ppsspp'
-		if (androidGitVersion.name() != "unknown") {
-			println "Overriding Android Version Name, Code: " + androidGitVersion.name() + " " + androidGitVersion.code()
-			versionName androidGitVersion.name()
-			versionCode androidGitVersion.code()
-		} else {
-			println "(not using these:) Android Version Name, Code: " + androidGitVersion.name() + " " + androidGitVersion.code()
-		}
-		file("versionname.txt").text = androidGitVersion.name()
-		file("versioncode.txt").text = androidGitVersion.code().toString()
+		versionName "1.0.0"
+		versionCode 10000
 
 		minSdk = 21
 		targetSdk = 36
@@ -87,19 +70,12 @@ android {
 	}
 	buildTypes {
 		debug {
-			minifyEnabled = false
-			jniDebuggable = true
 			signingConfig = signingConfigs.debug
 		}
-		optimized {
-			// Debug signed but optimized.
-			minifyEnabled = false
-			jniDebuggable = true
-			signingConfig = android.buildTypes.debug.signingConfig
-		}
 		release {
+			signingConfig = signingConfigs.debug  // Use debug signing for now
 			minifyEnabled = false
-			signingConfig = signingConfigs.release
+			proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 		}
 	}
 	externalNativeBuild {
