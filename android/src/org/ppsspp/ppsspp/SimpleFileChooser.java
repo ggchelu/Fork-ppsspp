@@ -27,7 +27,7 @@ public class SimpleFileChooser {
 		this.mActivity = activity;
 		this.mFileListener = listener;
 		if (!path.exists())
-			path = Environment.getExternalStorageDirectory();
+			path = new File(Environment.getExternalStorageDirectory(), "Emulation/storage/PSP");
 		rebuildFileList(path);
 	}
 

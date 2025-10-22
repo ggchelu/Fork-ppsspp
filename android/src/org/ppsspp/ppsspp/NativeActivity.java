@@ -408,7 +408,7 @@ public abstract class NativeActivity extends Activity {
 		}
 
 		String extStorageState = Environment.getExternalStorageState();
-		String extStorageDir = Environment.getExternalStorageDirectory().getAbsolutePath();
+		String extStorageDir = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Emulation/storage";
 		File externalFiles = this.getExternalFilesDir(null);
 		String externalFilesDir = externalFiles == null ? "" : externalFiles.getAbsolutePath();
 		String nativeLibDir = getApplicationLibraryDir(appInfo);
@@ -1519,23 +1519,23 @@ public abstract class NativeActivity extends Activity {
 				intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
 				intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);  // Only allow local folders.
 				
-				// Pre-select PSP folder for Android 13+ (API 33+)
+				// Pre-navigate to PSP folder for Android 13+ (API 33+)
 				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
 					try {
-						// Try to create a URI for the PSP folder in external storage
+						// Navigate directly to the PSP folder
 						String externalStoragePath = Environment.getExternalStorageDirectory().getAbsolutePath();
-						File pspFolder = new File(externalStoragePath, "PSP");
+						File pspFolder = new File(externalStoragePath, "Emulation/storage/PSP");
 						
 						if (pspFolder.exists()) {
-							// Create a content URI for the PSP folder
+							// Create a content URI to open inside the PSP folder
 							Uri pspUri = DocumentsContract.buildTreeDocumentUri(
 								"com.android.externalstorage.documents", 
-								"primary:PSP"
+								"primary:Emulation%2Fstorage%2FPSP"
 							);
 							intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, pspUri);
 							Log.i(TAG, "Setting EXTRA_INITIAL_URI to PSP folder: " + pspUri);
 						} else {
-							Log.i(TAG, "PSP folder does not exist, not setting initial URI");
+							Log.i(TAG, "PSP folder does not exist at: " + pspFolder.getAbsolutePath());
 						}
 					} catch (Exception e) {
 						Log.w(TAG, "Failed to set initial URI for PSP folder: " + e.getMessage());

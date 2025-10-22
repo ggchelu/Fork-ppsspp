@@ -51,7 +51,8 @@ public class ShortcutActivity extends Activity {
 				Log.e(TAG, e.toString());
 			}
 		} else {
-			SimpleFileChooser fileDialog = new SimpleFileChooser(this, Environment.getExternalStorageDirectory(), onFileSelectedListener);
+			File pspDir = new File(Environment.getExternalStorageDirectory(), "Emulation/storage/PSP");
+			SimpleFileChooser fileDialog = new SimpleFileChooser(this, pspDir, onFileSelectedListener);
 			fileDialog.showDialog();
 		}
 	}

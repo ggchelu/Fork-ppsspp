@@ -413,7 +413,9 @@ void NativeInit(int argc, const char *argv[], const char *savegame_dir, const ch
 	// is no longer the plain root of external storage, but it's an app specific directory
 	// on external storage (g_extFilesDir).
 	if (System_GetPropertyBool(SYSPROP_ANDROID_SCOPED_STORAGE)) {
-		// There's no sensible default directory. Let the user browse for files.
+		// Set a default directory that will have /PSP appended to it
+		g_Config.memStickDirectory = Path(external_dir);
+		// There's no sensible default directory for browsing. Let the user browse for files.
 		g_Config.defaultCurrentDirectory.clear();
 	} else {
 		g_Config.memStickDirectory = Path(external_dir);
